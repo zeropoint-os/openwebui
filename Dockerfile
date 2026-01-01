@@ -1,7 +1,6 @@
-FROM ollama/ollama:latest
+FROM ghcr.io/open-webui/open-webui:main
 
-# Expose the default Ollama port
-EXPOSE 11434
+# Expose the default OpenWebUI port
+EXPOSE 8080
 
-# Set the default command to run Ollama server
-CMD ["serve"]
+# OpenWebUI runs automatically, no need to specify CMD
