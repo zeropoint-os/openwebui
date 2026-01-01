@@ -9,7 +9,7 @@ terraform {
 
 variable "zp_app_id" {
   type        = string
-  default     = "ollama"
+  default     = "openwebui"
   description = "Unique identifier for this app instance (user-defined, freeform)"
 }
 
@@ -35,8 +35,8 @@ variable "zp_app_storage" {
   description = "Host path for persistent storage (injected by zeropoint)"
 }
 
-# Build Ollama image from local Dockerfile
-resource "docker_image" "ollama" {
+# Build OpenWebUI image from local Dockerfile
+resource "docker_image" "openwebui" {
   name = "${var.zp_app_id}:latest"
   build {
     context    = path.module
@@ -46,10 +46,10 @@ resource "docker_image" "ollama" {
   keep_locally = true
 }
 
-# Main Ollama container (no host port binding)
-resource "docker_container" "ollama_main" {
+# Main OpenWebUI container (no host port binding)
+resource "docker_container" "openwebui_main" {
   name  = "${var.zp_app_id}-main"
-  image = docker_image.ollama.image_id
+  image = docker_image.openwebui.image_id
 
   # Network configuration (provided by zeropoint)
   networks_advanced {
@@ -59,39 +59,35 @@ resource "docker_container" "ollama_main" {
   # Restart policy
   restart = "unless-stopped"
 
-  # GPU access (conditional based on vendor)
-  runtime = var.zp_gpu_vendor == "nvidia" ? "nvidia" : null
-  gpus    = var.zp_gpu_vendor != "" ? "all" : null
-
   # Environment variables
   env = [
-    "OLLAMA_HOST=0.0.0.0",
+    "WEBUI_SECRET_KEY=your-secret-key-here",
   ]
 
   # Persistent storage
   volumes {
-    host_path      = "${var.zp_app_storage}/.ollama"
-    container_path = "/root/.ollama"
+    host_path      = "${var.zp_app_storage}/data"
+    container_path = "/app/backend/data"
   }
 
   # Ports exposed internally (no host binding)
-  # Port 11434 is accessible via service discovery (DNS)
+  # Port 8080 is accessible via service discovery (DNS)
 }
 
 # Outputs for zeropoint (container resource only)
 output "main" {
-  value       = docker_container.ollama_main
-  description = "Main Ollama container"
+  value       = docker_container.openwebui_main
+  description = "Main OpenWebUI container"
 }
 
 # Service ports for external access (defined but not bound to host)
 output "main_ports" {
   value = {
-    api = {
-      port        = 11434                   # Ollama API port
+    web = {
+      port        = 8080                    # OpenWebUI web interface port
       protocol    = "http"                  # The protocol used
       transport   = "tcp"                   # Transport layer
-      description = "Ollama API endpoint"   # Description of the port
+      description = "OpenWebUI web interface" # Description of the port
       default     = true                    # Default port for the service
     }
   }
