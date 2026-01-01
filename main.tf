@@ -35,6 +35,18 @@ variable "zp_app_storage" {
   description = "Host path for persistent storage (injected by zeropoint)"
 }
 
+variable "ollama_endpoint" {
+  type        = string
+  default     = ""
+  description = "Ollama API endpoint URL (e.g., http://ollama-main:11434). If empty, Ollama integration will need to be configured manually in OpenWebUI."
+}
+
+variable "webui_secret_key" {
+  type        = string
+  default     = "your-secret-here"
+  description = "Secret key for OpenWebUI session encryption and JWT signing. Should be a random, secure string for production deployments."
+}
+
 # Build OpenWebUI image from local Dockerfile
 resource "docker_image" "openwebui" {
   name = "${var.zp_app_id}:latest"
@@ -60,9 +72,12 @@ resource "docker_container" "openwebui_main" {
   restart = "unless-stopped"
 
   # Environment variables
-  env = [
-    "WEBUI_SECRET_KEY=your-secret-key-here",
-  ]
+  env = concat(
+    [
+      "WEBUI_SECRET_KEY=${var.webui_secret_key}",
+    ],
+    var.ollama_endpoint != "" ? ["OLLAMA_BASE_URL=${var.ollama_endpoint}"] : []
+  )
 
   # Persistent storage
   volumes {

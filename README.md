@@ -61,6 +61,8 @@ terraform destroy \
 | `network_name` | string | Pre-created Docker network name (injected by zeropoint) | (required) |
 | `arch` | string | Target architecture: amd64, arm64, etc. (injected by zeropoint) | `"amd64"` |
 | `app_storage` | string | Host path for persistent storage (injected by zeropoint) | (required) |
+| `ollama_endpoint` | string | Ollama API endpoint URL (e.g., http://ollama-main:11434) | `""` (optional) |
+| `webui_secret_key` | string | Secret key for session encryption and JWT signing | `"your-secret-here"` |
 
 ## Outputs
 
