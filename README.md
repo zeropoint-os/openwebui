@@ -18,49 +18,32 @@ This module defines the OpenWebUI app for zeropoint os using Terraform and the D
 ### Via zeropoint API
 
 ```bash
-curl -X POST http://localhost:8080/apps/install \
+curl -X POST http://<zeropoint-node-name>:2370/modules/install \
   -H "Content-Type: application/json" \
   -d '{
-    "module_path": "/workspaces/zeropoint-agent/apps/openwebui",
-    "app_id": "openwebui",
-    "arch": "arm64"
+    "source": "https://github.com/zeropoint-os/openwebui.git", 
+    "module_id": "openwebui"
   }'
 ```
 
 ### Manual (for testing)
 
-```bash
-cd /workspaces/zeropoint-agent/apps/openwebui
+### Manual (for testing)
 
-# Initialize Terraform
-terraform init
+Use Run task (Shift+Alt+T)
+1. Full test - setup and apply
+2. Full test - cleanup
 
-# Plan (preview changes)
-terraform plan \
-  -var app_id=openwebui \
-  -var network_name=zeropoint-app-openwebui \
-  -var arch=amd64
-
-# Apply (create resources)
-terraform apply \
-  -var app_id=openwebui \
-  -var network_name=zeropoint-app-openwebui \
-  -var arch=amd64
-
-# Destroy (clean up)
-terraform destroy \
-  -var app_id=openwebui \
-  -var network_name=zeropoint-app-openwebui
-```
+The install will be performed using Docker-in-Docker.
 
 ## Inputs
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `app_id` | string | Unique identifier for this app instance (injected by zeropoint) | `"openwebui"` |
-| `network_name` | string | Pre-created Docker network name (injected by zeropoint) | (required) |
-| `arch` | string | Target architecture: amd64, arm64, etc. (injected by zeropoint) | `"amd64"` |
-| `app_storage` | string | Host path for persistent storage (injected by zeropoint) | (required) |
+| `zp_module_id` | string | Unique identifier for this app instance (injected by zeropoint) | `"openwebui"` |
+| `zp_network_name` | string | Pre-created Docker network name (injected by zeropoint) | (required) |
+| `zp_arch` | string | Target architecture: amd64, arm64, etc. (injected by zeropoint) | `"amd64"` |
+| `zp_module_storage` | string | Host path for persistent storage (injected by zeropoint) | (required) |
 | `ollama_endpoint` | string | Ollama API endpoint URL (e.g., http://ollama-main:11434) | `""` (optional) |
 | `webui_secret_key` | string | Secret key for session encryption and JWT signing | `"your-secret-here"` |
 
