@@ -41,6 +41,12 @@ variable "ollama_endpoint" {
   description = "Ollama API endpoint URL (e.g., http://ollama-main:11434). If empty, Ollama integration will need to be configured manually in OpenWebUI."
 }
 
+variable "searxng_url" {
+  type        = string
+  default     = ""
+  description = "SearXNG query URL for web search integration (e.g., http://searxng-main:8080/search?q=<query>)"
+}
+
 variable "webui_secret_key" {
   type        = string
   default     = "your-secret-here"
@@ -76,7 +82,8 @@ resource "docker_container" "openwebui_main" {
     [
       "WEBUI_SECRET_KEY=${var.webui_secret_key}",
     ],
-    var.ollama_endpoint != "" ? ["OLLAMA_BASE_URL=${var.ollama_endpoint}"] : []
+    var.ollama_endpoint != "" ? ["OLLAMA_BASE_URL=${var.ollama_endpoint}"] : [],
+    var.searxng_url != "" ? ["SEARXNG_QUERY_URL=${var.searxng_url}", "WEB_SEARCH_ENGINE=searxng"] : []
   )
 
   # Persistent storage
