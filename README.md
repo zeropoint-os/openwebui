@@ -43,7 +43,8 @@ The install will be performed using Docker-in-Docker.
 | `zp_module_id` | string | Unique identifier for this app instance (injected by zeropoint) | `"openwebui"` |
 | `zp_network_name` | string | Pre-created Docker network name (injected by zeropoint) | (required) |
 | `zp_arch` | string | Target architecture: amd64, arm64, etc. (injected by zeropoint) | `"amd64"` |
-| `zp_module_storage` | string | Host path for persistent storage (injected by zeropoint) | (required) |
+| `zp_module_dir` | string | Agent's working directory for this module — terraform state + cloned source (injected by zeropoint) | (required) |
+| `zp_storage_dir` | string | Isolated data root for this module — all bind mounts must live under here (injected by zeropoint) | (required) |
 | `ollama_endpoint` | string | Ollama API endpoint URL (e.g., http://ollama-main:11434) | `""` (optional) |
 | `searxng_url` | string | SearXNG query URL for web search integration (e.g., http://searxng-main:8080/search?q=<query>) | `""` (optional) |
 | `webui_secret_key` | string | Secret key for session encryption and JWT signing | `"your-secret-here"` |
